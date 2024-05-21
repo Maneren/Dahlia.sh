@@ -216,5 +216,5 @@ __dh_get_ansi() {
 # Usage:
 #   __dh_findall_regex "&2test&R" "${__DH_CODE_REGEXES[1]}" #-> "&2\n&R"
 __dh_findall_regex() {
-	echo "$1" | grep -ohE "$2" | sort | uniq
+	echo -n "$1" | grep -ohE "$2" | sort | uniq
 }

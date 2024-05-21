@@ -29,7 +29,7 @@ dahlia_clean() {
 	local msg="$(__dh_get_input "$@")"
 
 	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		msg="$(echo "$msg" | sed -E "s/${marker}${regex}//g")"
+		msg="$(echo -n "$msg" | sed -E "s/${marker}${regex}//g")"
 	done
 
 	# Unescape markers
