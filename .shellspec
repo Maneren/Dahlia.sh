@@ -1,0 +1,4 @@
+## Default kcov (coverage) options
+--kcov-options "--include-path=./lib --path-strip-level=1"
+--kcov-options "--include-pattern=.sh"
+--kcov-options "--exclude-pattern=/.shellspec,/spec/,/coverage/,/report/"
