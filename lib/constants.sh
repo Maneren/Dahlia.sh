@@ -1,31 +1,48 @@
-# shellcheck shell=bash
+# shellcheck shell=zsh
 
+# Constants for the Dahlia text formatter
+
+# Map from depth to number identifier of bits
 declare -A __DH_DEPTHS=(
 	[HIGH]="24"
 	[MEDIUM]="8"
 	[LOW]="4"
 	[TTY]="3"
+	[24]="24"
+	[8]="8"
+	[4]="4"
+	[3]="3"
 )
 
-# set default values if not set already
-[ "$DAHLIA_MARKER" = "" ] && export DAHLIA_MARKER="&"
-[ "$DAHLIA_NO_RESET" = "" ] && export DAHLIA_NO_RESET=0
-[ "$DAHLIA_DEPTH" = "" ] && export DAHLIA_DEPTH=HIGH
-[ "$DAHLIA_NO_COLOR" = "" ] && export DAHLIA_NO_COLOR=0
+# Regexes for Dahlia codes
+__DH_CODE_REGEXES=($'(_?)(~?)([0-9a-fh-oR]|r[a-o])' $'(_?)(~?)\[#([0-9a-fA-F]{6})\]')
 
-__DH_CODE_REGEXES=($'(~?)([0-9a-gl-or])' $'(~?)\[#([0-9a-fA-F]{6})\]')
-__DH_ANSI_REGEXES=(
-	$'\e\[[0-9]+m'
-	$'\e\[(3|4)8;5;[0-9]+m'
-	$'\e\[(3|4)8;2;[0-9]+;[0-9]+;[0-9]+m'
-)
+# Regex for ANSI codes
+# From Dahlia spec (https://github.com/dahlia-lib/spec/blob/v1.0.0/SPECIFICATION.md#clean_ansi)
+# edited for use with GNU sed
+__DH_ANSI_REGEX='[\x1B\x9B][][()#;?]*((((;[-[:alnum:]\/#&.:=?%@~_]+)*|[[:alnum:]]+(;[-[:alnum:]\/#&.:=?%@~_]*)*)?\x07)|(([0-9]{1,4}(;[0-9]{0,4})*)?[0-9A-PR-TZcf-nq-uy=><~]))'
 
 declare -A __DH_FORMATTERS=(
+	[h]="8"
+	[i]="7"
+	[j]="2"
+	[k]="5"
 	[l]="1"
 	[m]="9"
 	[n]="4"
 	[o]="3"
-	[r]="0"
+	[R]="0"
+	[rf]="39"
+	[rb]="49"
+	[rc]="39 49"
+	[rh]="28"
+	[ri]="27"
+	[rj]="22"
+	[rk]="25"
+	[rl]="22"
+	[rm]="29"
+	[rn]="24"
+	[ro]="23"
 )
 
 declare -A __DH_COLORS_3BIT=(
@@ -45,7 +62,6 @@ declare -A __DH_COLORS_3BIT=(
 	[d]="35"
 	[e]="33"
 	[f]="37"
-	[g]="33"
 )
 
 declare -A __DH_COLORS_4BIT=(
@@ -65,7 +81,6 @@ declare -A __DH_COLORS_4BIT=(
 	[d]="95"
 	[e]="93"
 	[f]="97"
-	[g]="33"
 )
 
 declare -A __DH_COLORS_8BIT=(
@@ -85,7 +100,6 @@ declare -A __DH_COLORS_8BIT=(
 	[d]="207"
 	[e]="227"
 	[f]="15"
-	[g]="184"
 )
 
 declare -A __DH_COLORS_24BIT=(
@@ -105,7 +119,6 @@ declare -A __DH_COLORS_24BIT=(
 	[d]="255 85 255"
 	[e]="255 255 85"
 	[f]="255 255 255"
-	[g]="221 214 5"
 )
 
 declare -A __DH_TEMPLATES=(

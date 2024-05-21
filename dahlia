@@ -1,0 +1,43 @@
+#!/bin/bash
+# shellcheck disable=2016
+
+source "$(dirname "$0")"/lib/lib.sh
+
+show_help() {
+	echo "\
+Dahlia — a simple text formatting package, inspired by the game Minecraft.
+
+Usage:
+  dahlia [--] TEXT
+    parse the TEXT and color it
+
+  dahlia {clean|clean_ansi} TEXT
+    remove Dahlia/ANSI codes from TEXT
+
+  dahlia test
+    print short test string
+
+  dahlia {--help|help}
+    print this help
+
+Configuration via environment variables:
+  DAHLIA_DEPTH - color depth
+    either case insensitive string AUTO, TTY, LOW, MEDIUM or HIGH or number of bits 0, 3, 4, 8, 24
+    (default or auto is tries to infer the best based on the terminal)
+
+  DAHLIA_MARKER - specify what marker to use (default is &)
+
+  DAHLIA_AUTO_RESET - if not falsy auto add reset (default is true)
+
+Respects NO_COLOR environment variable.
+"
+}
+
+case "$1" in
+'' | --help | help) show_help ;;
+--) dahlia_convert "${@:2}" ;;
+test) dahlia_test ;;
+clean) dahlia_clean "${@:2}" ;;
+clean_ansi) dahlia_clean_ansi "${@:2}" ;;
+*) dahlia_convert "$@" ;;
+esac
