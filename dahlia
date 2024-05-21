@@ -27,7 +27,7 @@ Configuration via environment variables:
 
   DAHLIA_MARKER - specify what marker to use (default is &)
 
-  DAHLIA_AUTO_RESET - if not falsy auto add reset (default is true)
+  DAHLIA_AUTO_RESET - if not 0 auto add reset (default is 1)
 
 Respects NO_COLOR environment variable.
 "

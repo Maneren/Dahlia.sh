@@ -130,12 +130,12 @@ dahlia_print() {
 #
 dahlia_convert() {
 	# Default values
-	DAHLIA_AUTO_RESET=${DAHLIA_AUTO_RESET:-1}
-	DAHLIA_DEPTH=${DAHLIA_DEPTH:-AUTO}
 	if [ "$NO_COLOR" != "" ]; then
 		dahlia_clean "$@"
 		return $?
 	fi
+
+	DAHLIA_DEPTH=${DAHLIA_DEPTH:-AUTO}
 
 	# Try to infer depth from envars
 	local parsed_depth
@@ -166,8 +166,8 @@ dahlia_convert() {
 	local msg="$(__dh_get_input "$@")"
 
 	# Handle AUTO_RESET
-	[[ -z "$DAHLIA_AUTO_RESET" || "$msg" == *"$reset" ]]
 	local reset="${marker}R"
+	[[ "${DAHLIA_AUTO_RESET:-1}" != 0 && "$msg" != *"$reset" ]] && msg+="$reset"
 
 	local ansi
 	# For each code type
