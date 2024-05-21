@@ -1,5 +1,4 @@
-# shellcheck disable=2059
-# shellcheck shell=bash
+# shellcheck shell=bash disable=2155
 
 __DH_ROOT="$(dirname BASH_SOURCE)"
 source "$__DH_ROOT"/lib/constants.sh
@@ -23,30 +22,18 @@ source "$__DH_ROOT"/lib/utils.sh
 #   echo "Hello, &RWorld!&r" | dahlia_clean #-> "Hello, World!"
 #
 dahlia_clean() {
-	local marker
-	marker=$(__dh_get_marker)
+	DAHLIA_MARKER=${DAHLIA_MARKER:-'&'}
 
-	local marker
-	msg="$(__dh_get_input "$@")"
+	local marker=$(__dh_get_marker)
 
-	local escaped="${marker}_"
+	local msg="$(__dh_get_input "$@")"
 
-	local patterns
 	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		regex="${marker}${regex}"
-
-		readarray -t patterns < <(echo "$msg" | grep -ohE "$regex" | sort | uniq)
-
-		for code in "${patterns[@]}"; do
-			[[ "$code" = "$escaped"* ]] && continue
-
-			msg="${msg//${code}/}"
-		done
+		msg="$(echo "$msg" | sed -E "s/${marker}${regex}//g")"
 	done
 
-	msg="${msg//"$escaped"/"$marker"}"
-
-	echo "$msg"
+	# Unescape markers
+	echo -n "${msg//"${DAHLIA_MARKER}_"/"$DAHLIA_MARKER"}"
 }
 
 # Cleans the input message by removing all ANSI codes.
@@ -134,12 +121,11 @@ dahlia_print() {
 #
 dahlia_convert() {
 	# Default values
-	[ "$DAHLIA_AUTO_RESET" = "" ] && DAHLIA_AUTO_RESET=1
-	[ "$DAHLIA_DEPTH" = "" ] && DAHLIA_DEPTH=AUTO
-	[ "$DAHLIA_MARKER" = "" ] && DAHLIA_MARKER='&'
+	DAHLIA_AUTO_RESET=${DAHLIA_AUTO_RESET:-1}
+	DAHLIA_DEPTH=${DAHLIA_DEPTH:-AUTO}
+	DAHLIA_MARKER=${DAHLIA_MARKER:-'&'}
 
-	local marker
-	marker=$(__dh_get_marker)
+	local marker=$(__dh_get_marker)
 
 	if [ "$NO_COLOR" != "" ]; then
 		dahlia_clean "$@"
@@ -160,44 +146,32 @@ dahlia_convert() {
 	fi
 
 	# Load the message
-	local msg
-	msg="$(__dh_get_input "$@")"
+	local msg="$(__dh_get_input "$@")"
 
 	# Handle AUTO_RESET
 	local reset="${DAHLIA_MARKER}R"
-	if [ "$DAHLIA_AUTO_RESET" != "" ] || [[ ! "$msg" =~ ${reset}$ ]]; then
-		msg+="$reset"
-	fi
+	[[ -z "$DAHLIA_AUTO_RESET" || "$msg" == *"$reset" ]]
 
-	local escaped="${DAHLIA_MARKER}_"
-
-	local ansi patterns
+	local ansi
 	# For each code type
 	for regex in "${__DH_CODE_REGEXES[@]}"; do
 		regex="${marker}${regex}"
 
-		# Find all occurrences
-		readarray -t patterns < <(echo -n "$msg" | grep -ohE "$regex" | sort | uniq)
-
-		# For each occurrence
-		for code in "${patterns[@]}"; do
-			# Skip escaped codes
-			[[ "$code" = "$escaped"* ]] && continue
-
+		# For each code
+		while read -r code; do
 			# Try to convert it to ANSI
-			if ! ansi=$(__dh_get_ansi "${code/"$DAHLIA_MARKER"/}" "$parsed_depth"); then
+			if ! ansi=$(__dh_get_ansi "${code/$DAHLIA_MARKER/}" "$parsed_depth"); then
 				__dh_error "Invalid code '$code'"
 				return 1
 			fi
 
-			msg="${msg//"$code"/"$ansi"}"
-		done
+			# Replace all occurences
+			msg="${msg//$code/$ansi}"
+		done < <(__dh_findall_regex "$msg" "$regex")
 	done
 
-	# Unescape
-	msg="${msg//"$escaped"/"$marker"}"
-
-	echo -n "$msg"
+	# Unescape markers
+	echo -n "${msg//"${DAHLIA_MARKER}_"/"$DAHLIA_MARKER"}"
 }
 
 # Prints a prompt to the user and returns the user's input.
@@ -215,13 +189,14 @@ dahlia_convert() {
 #  echo "John" | dahlia_input "&2Enter your name: " #-> Enter your name: John
 #
 dahlia_input() {
-	local prompt=$1
-
-	if ! dahlia_convert "$prompt"; then
+	# Print the prompt
+	if ! dahlia_convert "$1"; then
 		return $?
 	fi
 
+	# Read from stdin
 	local msg
 	read -r msg
+
 	echo -n "$msg"
 }

@@ -2,7 +2,6 @@
 
 # Constants for the Dahlia text formatter
 
-# Map from depth to number identifier of bits
 declare -A __DH_DEPTHS=(
 	[HIGH]="24"
 	[MEDIUM]="8"
@@ -15,11 +14,11 @@ declare -A __DH_DEPTHS=(
 )
 
 # Regexes for Dahlia codes
-__DH_CODE_REGEXES=($'(_?)(~?)#([0-9a-f]{3}|[0-9a-f]{6});' $'(_?)(~?)([0-9a-fh-oR]|r[bcfh-o])')
+__DH_CODE_REGEXES=($'(~?)#([0-9a-f]{3}|[0-9a-f]{6});' $'(~?)([0-9a-fh-oR]|r[bcfh-o])')
 
 # Regex for ANSI codes
 # From Dahlia spec (https://github.com/dahlia-lib/spec/blob/v1.0.0/SPECIFICATION.md#clean_ansi)
-# edited for use with GNU sed
+# edited for compatibility with GNU sed
 __DH_ANSI_REGEX='[\x1B\x9B][][()#;?]*((((;[-[:alnum:]\/#&.:=?%@~_]+)*|[[:alnum:]]+(;[-[:alnum:]\/#&.:=?%@~_]*)*)?\x07)|(([0-9]{1,4}(;[0-9]{0,4})*)?[0-9A-PR-TZcf-nq-uy=><~]))'
 
 declare -A __DH_FORMATTERS=(
@@ -121,6 +120,7 @@ declare -A __DH_COLORS_24BIT=(
 	[f]="255 255 255"
 )
 
+# printf templates for ANSI codes
 declare -A __DH_TEMPLATES=(
 	[3]=$'\e[%dm'
 	[4]=$'\e[%dm'
@@ -128,6 +128,7 @@ declare -A __DH_TEMPLATES=(
 	[24]=$'\e[38;2;%d;%d;%dm'
 )
 
+# printf templates for ANSI background codes
 declare -A __DH_BG_TEMPLATES=(
 	[3]=$'\e[%dm'
 	[4]=$'\e[%dm'

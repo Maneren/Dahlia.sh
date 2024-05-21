@@ -1,5 +1,4 @@
-# shellcheck disable=2059
-# shellcheck shell=bash
+# shellcheck shell=bash disable=2059 disable=2155
 
 # Print error messages to the stderr.
 #
@@ -48,18 +47,12 @@ __dh_get_marker() {
 #   __dh_get_input "Hello, World!"          #-> "Hello, World!"
 #   echo "Hello, World!" | __dh_get_input   #-> "Hello, World!"
 #   echo "Hello, World!" | __dh_get_input - #-> "Hello, World!"
+#   echo "false" | __dh_get_input "Hello"   #-> "Hello"
 #
 __dh_get_input() {
 	local msg="$1"
-
-	if [[ -z "$msg" || "$msg" = "-" ]]; then
-		msg=""
-		while read -r line; do
-			msg+=$line
-		done </dev/stdin
-	fi
-
-	echo "$msg"
+	[ "$msg" = "" ] || [ "$msg" = "-" ] && msg="$(</dev/stdin)"
+	echo -n "$msg"
 }
 
 # Infer the color depth for the current terminal.
@@ -169,7 +162,7 @@ __dh_get_ansi() {
 	local formatter="${__DH_FORMATTERS[$code]}"
 	if [ "$formatter" != "" ]; then
 		# One code can produce multiple ANSI codes
-		read -r -a values < <(echo -n "$formatter")
+		read -r -a values <<<"$formatter"
 
 		local str=""
 
@@ -190,7 +183,7 @@ __dh_get_ansi() {
 		local color_code="${__DH_COLORS_24BIT[$code]}"
 		[ "$color_code" != "" ] || return 1
 
-		read -r -a rgb < <(echo -n "$color_code")
+		read -r -a rgb <<<"$color_code"
 
 		printf "$template" "${rgb[@]}"
 		return 0
@@ -209,4 +202,19 @@ __dh_get_ansi() {
 	[ "$bg" = "true" ] && [ "$depth" -le "${__DH_DEPTHS[LOW]}" ] && value=$((value + 10))
 
 	printf "$template" "$value"
+}
+
+# Find all unique matches of the regular expression in the string.
+#
+# Arguments:
+#   $1: The string to search in.
+#   $2: The regular expression to match.
+#
+# Returns:
+#   Print all matches on separate lines.
+#
+# Usage:
+#   __dh_findall_regex "&2test&R" "${__DH_CODE_REGEXES[1]}" #-> "&2\n&R"
+__dh_findall_regex() {
+	echo "$1" | grep -ohE "$2" | sort | uniq
 }
