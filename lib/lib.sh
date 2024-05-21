@@ -168,7 +168,7 @@ dahlia_convert() {
 
 	# Handle AUTO_RESET
 	local reset="${marker}R"
-	[[ "${DAHLIA_AUTO_RESET:-1}" != 0 && "$msg" != *"$reset" ]] && msg+="$reset"
+	[[ ${DAHLIA_AUTO_RESET:-1} != 0 && $msg != *"$reset" ]] && msg+="$reset"
 
 	local ansi
 	# For each code type

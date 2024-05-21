@@ -131,7 +131,7 @@ __dh_get_ansi() {
 	local -n formats
 
 	# Check if the code is a background color code and remove the modifier
-	if [[ "$code" = '~'* ]]; then
+	if [[ $code == '~'* ]]; then
 		formats=__DH_BG_TEMPLATES
 		code=${code:1}
 		bg=true
