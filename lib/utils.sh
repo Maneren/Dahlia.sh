@@ -151,10 +151,17 @@ __dh_get_ansi() {
 		formats=__DH_TEMPLATES
 	fi
 
-	# Check if the code is in format `[#aabbcc]`
-	if [ ${#code} = 9 ]; then
+	# Check if the code is in format `#aabbcc;`
+	if [ ${#code} = 8 ]; then
 		# If it is, convert the code to an ANSI 24-bit color code
-		printf "${formats[24]}" 0x"${code:2:2}" 0x"${code:4:2}" 0x"${code:6:2}"
+		printf "${formats[24]}" 0x"${code:1:2}" 0x"${code:3:2}" 0x"${code:5:2}"
+		return 0
+	fi
+
+	# Check if the code is in format `#abc;`
+	if [ ${#code} = 5 ]; then
+		# If it is, convert the code to an ANSI 24-bit color code
+		printf "${formats[24]}" 0x"${code:1:1}0" 0x"${code:2:1}0" 0x"${code:3:1}0"
 		return 0
 	fi
 

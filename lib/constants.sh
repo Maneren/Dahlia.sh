@@ -15,7 +15,7 @@ declare -A __DH_DEPTHS=(
 )
 
 # Regexes for Dahlia codes
-__DH_CODE_REGEXES=($'(_?)(~?)([0-9a-fh-oR]|r[a-o])' $'(_?)(~?)\[#([0-9a-fA-F]{6})\]')
+__DH_CODE_REGEXES=($'(_?)(~?)#([0-9a-f]{3}|[0-9a-f]{6});' $'(_?)(~?)([0-9a-fh-oR]|r[bcfh-o])')
 
 # Regex for ANSI codes
 # From Dahlia spec (https://github.com/dahlia-lib/spec/blob/v1.0.0/SPECIFICATION.md#clean_ansi)
