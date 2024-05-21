@@ -22,18 +22,26 @@ source "$__DH_ROOT"/lib/utils.sh
 #   echo "Hello, &RWorld!&r" | dahlia_clean #-> "Hello, World!"
 #
 dahlia_clean() {
-	DAHLIA_MARKER=${DAHLIA_MARKER:-'&'}
+	local marker=${DAHLIA_MARKER:-'&'}
 
-	local marker=$(__dh_get_marker)
+	if [ ${#marker} != 1 ]; then
+		__dh_error "Invalid marker '$marker'"
+		return 1
+	fi
+
+	local escaped_marker
+	if ! escaped_marker=$(__dh_escape "$marker"); then
+		return $?
+	fi
 
 	local msg="$(__dh_get_input "$@")"
 
 	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		msg="$(echo -n "$msg" | sed -E "s/${marker}${regex}//g")"
+		msg="$(echo -n "$msg" | sed -E "s/${escaped_marker}${regex}//g")"
 	done
 
 	# Unescape markers
-	echo -n "${msg//"${DAHLIA_MARKER}_"/"$DAHLIA_MARKER"}"
+	echo -n "${msg//"${marker}_"/"$marker"}"
 }
 
 # Cleans the input message by removing all ANSI codes.
@@ -114,6 +122,7 @@ dahlia_print() {
 # Returns:
 #   Prints the converted message to stdout (no trailing newline).
 #   If no color mode is used, it returns the exit status of the `dahlia_clean` function.
+#   If the marker is invalid, it prints the error message to stderr and returns 1.
 #   If the depth or some code is invalid, it prints the error message to stderr and returns 1.
 #
 # Usage:
@@ -123,10 +132,6 @@ dahlia_convert() {
 	# Default values
 	DAHLIA_AUTO_RESET=${DAHLIA_AUTO_RESET:-1}
 	DAHLIA_DEPTH=${DAHLIA_DEPTH:-AUTO}
-	DAHLIA_MARKER=${DAHLIA_MARKER:-'&'}
-
-	local marker=$(__dh_get_marker)
-
 	if [ "$NO_COLOR" != "" ]; then
 		dahlia_clean "$@"
 		return $?
@@ -145,22 +150,34 @@ dahlia_convert() {
 		return $?
 	fi
 
+	local marker=${DAHLIA_MARKER:-'&'}
+
+	if [ ${#marker} != 1 ]; then
+		__dh_error "Invalid marker '$marker'"
+		return 1
+	fi
+
+	local escaped_marker
+	if ! escaped_marker=$(__dh_escape "$marker"); then
+		return $?
+	fi
+
 	# Load the message
 	local msg="$(__dh_get_input "$@")"
 
 	# Handle AUTO_RESET
-	local reset="${DAHLIA_MARKER}R"
 	[[ -z "$DAHLIA_AUTO_RESET" || "$msg" == *"$reset" ]]
+	local reset="${marker}R"
 
 	local ansi
 	# For each code type
 	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		regex="${marker}${regex}"
+		regex="${escaped_marker}${regex}"
 
 		# For each code
 		while read -r code; do
 			# Try to convert it to ANSI
-			if ! ansi=$(__dh_get_ansi "${code/$DAHLIA_MARKER/}" "$parsed_depth"); then
+			if ! ansi=$(__dh_get_ansi "${code/"$marker"/}" "$parsed_depth"); then
 				__dh_error "Invalid code '$code'"
 				return 1
 			fi
@@ -171,7 +188,7 @@ dahlia_convert() {
 	done
 
 	# Unescape markers
-	echo -n "${msg//"${DAHLIA_MARKER}_"/"$DAHLIA_MARKER"}"
+	echo -n "${msg//"${marker}_"/"$marker"}"
 }
 
 # Prints a prompt to the user and returns the user's input.

@@ -12,25 +12,19 @@ __dh_error() {
 	echo "DahliaError: $*" >&2
 }
 
-# Get the marker to be used.
+# Escapes the string to be safe to use in regexes.
 #
-# Handles default value (`&`) and regex escaping.
-#
-# Environment Variables:
-#   DAHLIA_MARKER: The marker to be used. If not set, sets it to `&`.
+# Arguments:
+#   $1: The marker to be escaped.
 #
 # Returns:
-#   The marker to be used.
+#   Prints the escaped string to be used.
 #
 # Usage:
-#   marker=$(__dh_get_marker)
+#   marker=$(__dh_escape "$")
 #
-__dh_get_marker() {
-	if [ "$DAHLIA_MARKER" = "" ]; then
-		echo -n "&"
-	else
-		echo -n "$DAHLIA_MARKER" | sed 's/\([()[{*+.$^\\|?\/]\)/\\\1/g'
-	fi
+__dh_escape() {
+	echo -n "$1" | sed 's/\([()[{*+.$^\\|?\/]\)/\\\1/g'
 }
 
 # Reads the input message from `$1`.
