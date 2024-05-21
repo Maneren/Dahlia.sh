@@ -35,7 +35,7 @@ Usage:
 Configuration via environment variables:
   DAHLIA_DEPTH - color depth
     either case insensitive string AUTO, TTY, LOW, MEDIUM or HIGH or number of bits 0, 3, 4, 8, 24
-    (default or auto is tries to infer the best based on the terminal)
+    (default or AUTO is tries to infer the best based on the terminal)
 
   DAHLIA_MARKER - specify what marker to use (default is &)
 
