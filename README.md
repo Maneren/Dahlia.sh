@@ -58,7 +58,7 @@ It exposes following public functions:
 - `dahlia_print`
   Format given string with Dahlia and echo it (adds newline).
 - `dahlia_input`
-  Read user input with Dahlia formatted prompt and return it.
+  Get user input with Dahlia formatted prompt and return it.
 - `dahlia_clean`
   Remove Dahlia codes from given string.
 - `dahlia_clean_ansi`
@@ -68,6 +68,8 @@ For more details, see the docstrings in [lib.sh](lib/lib.sh) and
 the [specification](https://github.com/dahlia-lib/spec).
 
 ### Examples
+
+![example usage](https://github.com/Maneren/Dahlia.sh/assets/49210777/04cf2c4f-2301-478e-9773-ba8186efbfb1)
 
 ## License
 
