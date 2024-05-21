@@ -1,3 +1,4 @@
+# shell: bash
 # shellcheck shell=bash disable=2155
 
 __DH_ROOT="$(dirname BASH_SOURCE)"

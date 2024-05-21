@@ -1,4 +1,5 @@
-# shellcheck shell=zsh
+# shell: bash
+# shellcheck shell=bash
 
 # Constants for the Dahlia text formatter
 

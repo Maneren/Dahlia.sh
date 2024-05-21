@@ -1,3 +1,4 @@
+# shell: bash
 # shellcheck shell=bash disable=2059 disable=2155
 
 # Print error messages to the stderr.
