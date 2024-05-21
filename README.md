@@ -12,6 +12,12 @@ a special character & followed by a format code and finally the text to be forma
 
 Download the source and put the `dahlia` executable in your `$PATH`.
 
+## Dependencies
+
+- bash 5.0+
+- GNU `grep` and `sed` (non GNU version probably work but are not officially supported)
+- GNU coreutils - `dirname`, `sort`, `uniq`
+
 ## Usage
 
 See `dahlia --help`
