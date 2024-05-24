@@ -95,11 +95,13 @@ __dh_infer_depth() {
 		;;
 	*)
 		# If depth is not in __DH_DEPTHS, return an error
-		local depth="${__DH_DEPTHS[$depth]}"
-		if [ "$depth" != "" ]; then
-			echo -n "$depth"
+		# HACK: I don't know how to do this in a more elegant way, because otherwise
+		# it may print 'invalid subscript' error when depth is e.g. '-1'.
+		for d in "${!__DH_DEPTHS[@]}"; do
+			[[ $d != "$depth" ]] && continue
+			echo -n "${__DH_DEPTHS[$d]}"
 			return 0
-		fi
+		done
 
 		return 1
 		;;
