@@ -24,7 +24,7 @@ Context 'dahlia_convert'
 		End
 	End
 
-	It 'errors on multicharacter marker'
+	It 'errors on invalid marker'
 		DAHLIA_MARKER='&&'
 		When call dahlia_convert ""
 		The error should include 'Invalid marker'
@@ -143,19 +143,28 @@ Context 'dahlia_convert'
 	End
 End
 
-Describe 'dahlia_clean'
-	Parameters
-		"&e&nunderlined&rn yellow" "&" "underlined yellow"
-		"&e&nunderlined&rn yellow" "!" "&e&nunderlined&rn yellow"
-		"!e!nunderlined!rn yellow" "!" "underlined yellow"
-		"§_4 gives §4red" "§" "§4 gives red"
+Context 'dahlia_clean'
+	Describe 'handles input'
+		Parameters
+			"&e&nunderlined&rn yellow" "&" "underlined yellow"
+			"&e&nunderlined&rn yellow" "!" "&e&nunderlined&rn yellow"
+			"!e!nunderlined!rn yellow" "!" "underlined yellow"
+			"§_4 gives §4red" "§" "§4 gives red"
+		End
+
+		It "'$1'"
+			DAHLIA_MARKER="$2"
+			When call dahlia_clean "$1"
+			The output should equal "$3"
+			The status should be success
+		End
 	End
 
-	It "handles '$1'"
-		DAHLIA_MARKER="$2"
+	It 'errors on invalid marker'
+		DAHLIA_MARKER="&&"
 		When call dahlia_clean "$1"
-		The output should equal "$3"
-		The status should be success
+		The error should include 'Invalid marker'
+		The status should equal 1
 	End
 End
 
