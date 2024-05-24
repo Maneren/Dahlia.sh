@@ -141,6 +141,15 @@ Context 'dahlia_convert'
 			The status should be success
 		End
 	End
+
+	It 'handles dumb TERM'
+		DAHLIA_DEPTH=0
+		TERM=dumb
+		COLORTERM=
+		When call dahlia_convert "&2foo"
+		The output should equal 'foo'
+		The status should be success
+	End
 End
 
 Context 'dahlia_clean'
