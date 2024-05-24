@@ -1,4 +1,5 @@
 # shell: sh altsh=shellspec
+# shellcheck shell=bash disable=SC2034
 Include lib/lib.sh
 
 Context 'dahlia_convert'
@@ -110,14 +111,20 @@ Context 'dahlia_convert'
 	End
 
 	Describe 'handles invalid depths'
-	  Parameters:value '-1' '1' '16' 'best' 'worst'
+		Parameters
+			'-1'
+			'1'
+			'16'
+			'best'
+			'worst'
+		End
 
-	  Example "$1"
-	    DAHLIA_DEPTH="$1"
-	    When call dahlia_convert "foo"
-	    The error should include 'Invalid depth'
-	    The status should equal 1
-	  End
+		Example "$1"
+			DAHLIA_DEPTH="$1"
+			When call dahlia_convert "foo"
+			The error should include 'Invalid depth'
+			The status should equal 1
+		End
 	End
 End
 
