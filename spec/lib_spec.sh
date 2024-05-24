@@ -1,5 +1,5 @@
 # shell: sh altsh=shellspec
-# shellcheck shell=bash disable=SC2034
+# shellcheck shell=bash disable=SC2034,SC2286
 Include lib/lib.sh
 
 Context 'dahlia_convert'
@@ -124,6 +124,21 @@ Context 'dahlia_convert'
 			When call dahlia_convert "foo"
 			The error should include 'Invalid depth'
 			The status should equal 1
+		End
+	End
+
+	Describe 'handles NO_COLOR'
+		Parameters
+			'0' 'foo'
+			'1' 'foo'
+			'' $'\x1b[32mfoo'
+		End
+
+		Example "$1"
+			NO_COLOR="$1"
+			When call dahlia_convert "&2foo"
+			The output should equal "$2"
+			The status should be success
 		End
 	End
 End
