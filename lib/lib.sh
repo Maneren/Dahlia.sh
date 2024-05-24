@@ -30,10 +30,7 @@ dahlia_clean() {
 		return 1
 	fi
 
-	local escaped_marker
-	if ! escaped_marker=$(__dh_escape "$marker"); then
-		return $?
-	fi
+	local escaped_marker=$(__dh_escape "$marker")
 
 	local msg="$(__dh_get_input "$@")"
 
@@ -158,10 +155,7 @@ dahlia_convert() {
 		return 1
 	fi
 
-	local escaped_marker
-	if ! escaped_marker=$(__dh_escape "$marker"); then
-		return $?
-	fi
+	local escaped_marker=$(__dh_escape "$marker")
 
 	# Load the message
 	local msg="$(__dh_get_input "$@")"
