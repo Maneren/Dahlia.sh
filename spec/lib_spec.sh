@@ -129,7 +129,7 @@ Describe 'dahlia_clean'
 		"§_4 gives §4red" "§" "§4 gives red"
 	End
 
-	Example "$1"
+	It "handles '$1'"
 		DAHLIA_MARKER="$2"
 		When call dahlia_clean "$1"
 		The output should equal "$3"
@@ -145,7 +145,7 @@ Describe 'dahlia_clean_ansi'
 		'\x1b[xm' $'\x1b[xm' $'\x1b[xm'
 	End
 
-	Example "handles '$1'"
+	It "handles '$1'"
 		When call dahlia_clean_ansi "$2"
 		The output should equal "$3"
 		The status should be success
