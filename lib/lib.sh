@@ -140,7 +140,7 @@ dahlia_convert() {
 
 	# Try to infer depth from envars
 	local parsed_depth
-	if ! parsed_depth=$(__dahlia_infer_depth); then
+	if ! parsed_depth=$(__dh_infer_depth); then
 		__dh_error "Invalid depth '$DAHLIA_DEPTH'"
 		return 1
 	fi

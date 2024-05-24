@@ -68,9 +68,9 @@ __dh_get_input() {
 #   Prints the color depth in bits to stdout. Or returns 1 if the depth is invalid.
 #
 # Usage:
-#   __dahlia_infer_depth
+#   __dh_infer_depth
 #
-__dahlia_infer_depth() {
+__dh_infer_depth() {
 	determine_color_depth() {
 		case "$COLORTERM" in
 		24bit | truecolor) return 24 ;;
@@ -104,7 +104,6 @@ __dahlia_infer_depth() {
 		return 1
 		;;
 	esac
-
 }
 
 # Converts given Dahlia code to ANSI code.
