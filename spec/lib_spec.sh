@@ -205,3 +205,11 @@ Describe 'dahlia_input'
 		The status should be success
 	End
 End
+
+Describe 'dahlia_test'
+	It 'prints a test string'
+		When call dahlia_test
+		The output should equal $'[38;2;0;0;0m0[39m[49m[38;2;0;0;170m1[39m[49m[38;2;0;170;0m2[39m[49m[38;2;0;170;170m3[39m[49m[38;2;170;0;0m4[39m[49m[38;2;170;0;170m5[39m[49m[38;2;255;170;0m6[39m[49m[38;2;170;170;170m7[39m[49m[38;2;85;85;85m8[39m[49m[38;2;85;85;255m9[39m[49m[38;2;85;255;85ma[39m[49m[38;2;85;255;255mb[39m[49m[38;2;255;85;85mc[39m[49m[38;2;255;85;255md[39m[49m[38;2;255;255;85me[39m[49m[38;2;255;255;255mf[39m[49m[8mh[28m[7mi[27m[2mj[22m[5mk[25m[1ml[22m[9mm[29m[4mn[24m[3mo[23m[0m'
+		The status should be success
+	End
+End
