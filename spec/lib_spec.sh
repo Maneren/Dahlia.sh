@@ -150,6 +150,16 @@ Context 'dahlia_convert'
 		The output should equal 'foo'
 		The status should be success
 	End
+
+	It 'propagates errors'
+		__dh_get_ansi() {
+			__dh_error "Invalid code"
+			return 1
+		}
+		When call dahlia_convert "&2foo"
+		The error should include 'Invalid code'
+		The status should equal 1
+	End
 End
 
 Context 'dahlia_clean'
@@ -201,6 +211,16 @@ Describe 'dahlia_print'
 		The output should equal $'\x1b[93m\x1b[4munderlined\x1b[24m yellow'
 		The status should be success
 	End
+
+	It 'propagates conversion errors'
+		dahlia_convert() {
+			__dh_error "Something went wrong"
+			return 1
+		}
+		When call dahlia_print "&e&nunderlined&rn yellow"
+		The error should include 'Something went wrong'
+		The status should equal 1
+	End
 End
 
 Describe 'dahlia_input'
@@ -212,6 +232,17 @@ Describe 'dahlia_input'
 		When call dahlia_input "&2Name: "
 		The output should equal $'\x1b[32mName: John'
 		The status should be success
+	End
+
+	It 'propagates conversion errors'
+		dahlia_convert() {
+			__dh_error "Something went wrong"
+			return 1
+		}
+		Data 'John'
+		When call dahlia_input "&2Name: "
+		The error should include 'Something went wrong'
+		The status should equal 1
 	End
 End
 

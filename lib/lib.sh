@@ -97,11 +97,13 @@ dahlia_test() {
 #
 dahlia_print() {
 	local msg
-	if msg="$(dahlia_convert "$@")"; then
-		echo "$msg"
-	fi
+	msg="$(dahlia_convert "$@")"
 
-	return $?
+	local code=$?
+
+	[ "$code" != 0 ] && return "$code"
+
+	echo "$msg"
 }
 
 # Convert the input message into ANSI format.
@@ -201,10 +203,11 @@ dahlia_convert() {
 #  echo "John" | dahlia_input "&2Enter your name: " #-> Enter your name: John
 #
 dahlia_input() {
-	# Print the prompt
-	if ! dahlia_convert "$1"; then
-		return $?
-	fi
+	# Try to print the prompt
+	dahlia_convert "$1"
+	local code=$?
+
+	[ "$code" != 0 ] && return "$code"
 
 	# Read from stdin
 	local msg
