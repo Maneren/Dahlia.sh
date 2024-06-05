@@ -1,5 +1,5 @@
 # shell: sh altsh=shellspec
-# shellcheck shell=bash disable=SC2034,SC2286
+# shellcheck shell=bash disable=SC2034,SC2286,SC2317
 Include lib/lib.sh
 
 Context 'dahlia_convert'
