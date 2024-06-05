@@ -14,9 +14,15 @@ Download the source and put the `dahlia` executable in your `$PATH`.
 
 ## Dependencies
 
-- bash 5.0+
-- GNU `grep` and `sed` (non GNU version probably work but are not officially supported)
+The scripts are written for GNU Bash 5.0+.
+
+Other dependencies are reasonably modern (if someone knows how to find the
+minimal required version, please let me know).:
+
+- GNU `grep` and `sed` (non GNU version probably work too but aren't officially supported)
 - GNU coreutils - `dirname`, `sort`, `uniq`
+
+_Note: It is expected that all those commands are available in the `$PATH`._
 
 ## Usage
 
@@ -50,7 +56,7 @@ Configuration via environment variables:
 Respects NO_COLOR environment variable.
 ```
 
-## Lib
+## Library
 
 To use Dahlia in your project, source the `lib.sh` file in your script.
 
@@ -60,22 +66,22 @@ The API follows [the specification](https://github.com/dahlia-lib/spec) version 
 It exposes following public functions:
 
 - `dahlia_convert`
-  Format given string with Dahlia (no newline).
+  Format given string with Dahlia (no trailing newline).
 - `dahlia_print`
-  Format given string with Dahlia and echo it (adds newline).
+  Format given string with Dahlia and echo it (adds newline as needed).
 - `dahlia_input`
   Get user input with Dahlia formatted prompt and return it.
 - `dahlia_clean`
-  Remove Dahlia codes from given string.
+  Remove Dahlia formatting codes from given string.
 - `dahlia_clean_ansi`
-  Remove ANSI codes from given string.
+  Remove all ANSI codes from given string.
 
-For more details, see the docstrings in [lib.sh](lib/lib.sh) and
+For more details, see the documentation comments in [lib.sh](lib/lib.sh) and
 the [specification](https://github.com/dahlia-lib/spec).
 
 ### Examples
 
-![example usage](https://github.com/Maneren/Dahlia.sh/assets/49210777/04cf2c4f-2301-478e-9773-ba8186efbfb1)
+![example usage of the executable](https://github.com/Maneren/Dahlia.sh/assets/49210777/04cf2c4f-2301-478e-9773-ba8186efbfb1)
 
 ## License
 
