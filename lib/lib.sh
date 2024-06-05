@@ -32,11 +32,7 @@ dahlia_clean() {
 
 	local escaped_marker=$(__dh_escape "$marker")
 
-	local msg="$(__dh_get_input "$@")"
-
-	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		msg="$(echo -n "$msg" | sed -E "s/${escaped_marker}${regex}//g")"
-	done
+	msg="$(__dh_get_input "$@" | sed -E "s/${escaped_marker}${__DH_CODE_REGEX}//g")"
 
 	# Unescape markers
 	echo -n "${msg//"${marker}_"/"$marker"}"
@@ -166,23 +162,20 @@ dahlia_convert() {
 	local reset="${marker}R"
 	[[ ${DAHLIA_AUTO_RESET:-1} != 0 && $msg != *"$reset" ]] && msg+="$reset"
 
-	local ansi
-	# For each code type
-	for regex in "${__DH_CODE_REGEXES[@]}"; do
-		regex="${escaped_marker}${regex}"
+	local regex="${escaped_marker}${__DH_CODE_REGEX}"
 
-		# For each code
-		while read -r code; do
-			# Try to convert it to ANSI
-			if ! ansi=$(__dh_get_ansi "${code/"$marker"/}" "$parsed_depth"); then
-				__dh_error "Invalid code '$code'"
-				return 1
-			fi
+	# For each code in the message
+	while read -r code; do
+		# Try to convert it to ANSI
+		local ansi
+		if ! ansi=$(__dh_get_ansi "${code/"$marker"/}" "$parsed_depth"); then
+			__dh_error "Invalid code '$code'"
+			return 1
+		fi
 
-			# Replace all occurences
-			msg="${msg//$code/$ansi}"
-		done < <(__dh_findall_regex "$msg" "$regex")
-	done
+		# Replace all occurences
+		msg="${msg//$code/$ansi}"
+	done < <(__dh_findall_regex "$msg" "$regex")
 
 	# Unescape markers
 	echo -n "${msg//"${marker}_"/"$marker"}"
