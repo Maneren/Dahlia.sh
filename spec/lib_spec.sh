@@ -48,7 +48,7 @@ Context 'dahlia_convert'
 	It 'reads from stdin'
 		Data '&2green'
 		When call dahlia_convert
-		The output should equal $'\e[32mgreen'
+		The output should equal $'\x1b[32mgreen'
 		The status should be success
 	End
 
