@@ -127,6 +127,22 @@ Context 'dahlia_convert'
 		End
 	End
 
+	Describe 'handles hex codes'
+		Parameters
+			'&#aabbcc;foo' $'\x1b[38;2;170;187;204mfoo'
+			'&#abc;foo' $'\x1b[38;2;160;176;192mfoo'
+
+			'&~#aabbcc;foo' $'\x1b[48;2;170;187;204mfoo'
+			'&~#abc;foo' $'\x1b[48;2;160;176;192mfoo'
+		End
+
+		Example "$1"
+			When call dahlia_convert "$1"
+			The output should equal "$2"
+			The status should be success
+		End
+	End
+
 	Describe 'handles NO_COLOR'
 		Parameters
 			'0' 'foo'
