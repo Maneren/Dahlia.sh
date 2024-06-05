@@ -32,10 +32,8 @@ dahlia_clean() {
 
 	local escaped_marker=$(__dh_escape "$marker")
 
-	msg="$(__dh_get_input "$@" | sed -E "s/${escaped_marker}${__DH_CODE_REGEX}//g")"
-
-	# Unescape markers
-	echo -n "${msg//"${marker}_"/"$marker"}"
+	__dh_get_input "$@" |
+		sed -E -e "s/${escaped_marker}${__DH_CODE_REGEX}//g; s/${escaped_marker}_/${marker}/g"
 }
 
 # Cleans the input message by removing all ANSI codes.
