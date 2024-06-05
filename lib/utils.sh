@@ -160,15 +160,11 @@ __dh_get_ansi() {
 		# One code can produce multiple ANSI codes
 		read -r -a values <<<"$formatter"
 
-		local str=""
-
 		# Convert all ANSI code numbers to codes
 		for value in "${values[@]}"; do
-			# `print -v var` prints the output to `$var`
-			printf -v str "$str${formats[3]}" "$value"
+			printf "${formats[3]}" "$value"
 		done
 
-		echo -n "$str"
 		return 0
 	fi
 
