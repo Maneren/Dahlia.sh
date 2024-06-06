@@ -30,7 +30,6 @@ Describe 'dh_escape'
 		'}' '}'
 		'|' '\|'
 		'\' '\\'
-		'/' '\/'
 	End
 
 	It "escapes $1"

@@ -32,8 +32,10 @@ dahlia_clean() {
 
 	local escaped_marker=$(__dh_escape "$marker")
 
-	__dh_get_input "$@" |
-		sed -E -e "s/${escaped_marker}${__DH_CODE_REGEX}//g; s/${escaped_marker}_/${marker}/g"
+	# HACK: `\x90` is unused according to ASCII spec, so it's highly unlikely to be used as a marker
+	msg=$(__dh_get_input "$@" | sed -E $'s\x90'"${escaped_marker}${__DH_CODE_REGEX}"$'\x90\x90g')
+
+	echo -n "${msg//"${marker}_"/${marker}}"
 }
 
 # Cleans the input message by removing all ANSI codes.
@@ -172,7 +174,7 @@ dahlia_convert() {
 		fi
 
 		# Replace all occurences
-		msg="${msg//$code/$ansi}"
+		msg="${msg//"$code"/$ansi}"
 	done < <(__dh_findall_regex "$msg" "$regex")
 
 	# Unescape markers

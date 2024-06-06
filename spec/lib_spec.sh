@@ -1,5 +1,5 @@
 # shell: sh altsh=shellspec
-# shellcheck shell=bash disable=SC2034,SC2286,SC2317
+# shellcheck shell=bash disable=SC1003,SC2034,SC2286,SC2287,SC2288,SC2317
 Include lib/lib.sh
 
 Context 'dahlia_convert'
@@ -29,6 +29,30 @@ Context 'dahlia_convert'
 		When call dahlia_convert ""
 		The error should include 'Invalid marker'
 		The status should equal 1
+	End
+
+	Describe 'properly handles weird marker'
+		Parameters
+			"$"
+			"^"
+			"?"
+			"("
+			")"
+			'\'
+			"/"
+			"["
+			"]"
+			"*"
+			"+"
+			"."
+		End
+
+		Example "$1"
+			DAHLIA_MARKER="$1"
+			When call dahlia_convert "${1}4foo${1}_2bar"
+			The output should equal $'\x1b[31mfoo'"$1"'2bar'
+			The status should be success
+		End
 	End
 
 	Describe 'handles auto reset'
@@ -200,6 +224,30 @@ Context 'dahlia_clean'
 		When call dahlia_clean "$1"
 		The error should include 'Invalid marker'
 		The status should equal 1
+	End
+
+	Describe 'properly handles weird marker'
+		Parameters
+			"$"
+			"^"
+			"?"
+			"("
+			")"
+			'\'
+			"/"
+			"["
+			"]"
+			"*"
+			"+"
+			"."
+		End
+
+		Example "$1"
+			DAHLIA_MARKER="$1"
+			When call dahlia_clean "${1}4foo${1}_2bar"
+			The output should equal "foo${1}2bar"
+			The status should be success
+		End
 	End
 End
 

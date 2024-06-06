@@ -25,7 +25,7 @@ __dh_error() {
 #   marker=$(__dh_escape "$")
 #
 __dh_escape() {
-	echo -n "$1" | sed 's/\([()[{*+.$^\\|?\/]\)/\\\1/g'
+	echo -n "$1" | sed 's/\([()[{*+.$^\\|?]\)/\\\1/g'
 }
 
 # Reads the input message from `$1`.
