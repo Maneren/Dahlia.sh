@@ -122,7 +122,7 @@ dahlia_print() {
 #   If the depth or some code is invalid, it prints the error message to stderr and returns 1.
 #
 # Usage:
-#   dahlia_convert "&2Hello, World!" #-> "Hello, World!"
+#   dahlia_convert "&2Hello," "World!" #-> "Hello, World!"
 #
 dahlia_convert() {
 	# Default values

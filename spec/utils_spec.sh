@@ -46,6 +46,13 @@ Describe 'dh_get_input'
 		The status should be success
 	End
 
+	It 'concatenates multiple arguments'
+		Data 'bar' 'baz'
+		When call __dh_get_input "foo" "bar" "baz"
+		The output should equal "foo bar baz"
+		The status should be success
+	End
+
 	It 'reads from stdin with no args'
 		Data 'bar'
 		When call __dh_get_input

@@ -39,13 +39,13 @@ __dh_escape() {
 #   The input message with trailing newline.
 #
 # Usage:
-#   __dh_get_input "Hello, World!"          #-> "Hello, World!"
+#   __dh_get_input "Hello," " World!"          #-> "Hello, World!"
 #   echo "Hello, World!" | __dh_get_input   #-> "Hello, World!"
 #   echo "Hello, World!" | __dh_get_input - #-> "Hello, World!"
 #   echo "false" | __dh_get_input "Hello"   #-> "Hello"
 #
 __dh_get_input() {
-	local msg="$1"
+	local msg="$*"
 	[ "$msg" = "" ] || [ "$msg" = "-" ] && msg="$(</dev/stdin)"
 	echo -n "$msg"
 }
