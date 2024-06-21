@@ -1,9 +1,9 @@
 # shell: bash
 # shellcheck shell=bash disable=2155
 
-__DH_ROOT="$(dirname BASH_SOURCE)"
-source "$__DH_ROOT"/lib/constants.sh
-source "$__DH_ROOT"/lib/utils.sh
+__DH_ROOT="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$__DH_ROOT"/constants.sh
+source "$__DH_ROOT"/utils.sh
 
 # Clean the input message by removing all Dahlia codes.
 #
