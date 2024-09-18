@@ -1,7 +1,12 @@
-# shell: bash
+# shell: bash zsh
 # shellcheck shell=bash disable=2155
 
-__DH_ROOT="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ "$BASH_VERSION" != "" ]; then
+	__DH_ROOT="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+	__DH_ROOT="${funcsourcetrace[1]%/*}"
+fi
+
 source "$__DH_ROOT"/constants.sh
 source "$__DH_ROOT"/utils.sh
 
@@ -165,9 +170,9 @@ dahlia_convert() {
 	local regex="${escaped_marker}${__DH_CODE_REGEX}"
 
 	# For each code in the message
+	local ansi
 	while read -r code; do
 		# Try to convert it to ANSI
-		local ansi
 		if ! ansi=$(__dh_get_ansi "${code/"$marker"/}" "$parsed_depth"); then
 			__dh_error "Invalid code '$code'"
 			return 1

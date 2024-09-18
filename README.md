@@ -14,7 +14,7 @@ Download the source and put the `dahlia` executable in your `$PATH`.
 
 ## Dependencies
 
-The scripts are written for GNU Bash 5.0+.
+The scripts are written for GNU Bash 5.0/ZSH 5.9 and newer.
 
 Other dependencies are reasonably modern (if someone knows how to find the
 minimal required version, please let me know).:

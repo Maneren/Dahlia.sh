@@ -1,5 +1,4 @@
-## Dahlia only works with bash for now
---shell bash
+--shell bash # zsh
 ## Default kcov (coverage) options
 --kcov-options "--include-path=./lib --path-strip-level=1"
 --kcov-options "--include-pattern=.sh"

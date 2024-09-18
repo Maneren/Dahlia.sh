@@ -85,7 +85,11 @@ __dh_infer_depth() {
 	}
 
 	# Convert DAHLIA_DEPTH to uppercase
-	local depth="${DAHLIA_DEPTH^^}"
+	if [ "$BASH_VERSION" != "" ]; then
+  	local depth="${DAHLIA_DEPTH^^}"
+	else
+  	local depth="${(U)DAHLIA_DEPTH}"
+	fi
 
 	case $depth in
 	'' | AUTO | '0')
@@ -97,7 +101,12 @@ __dh_infer_depth() {
 		# If depth is not in __DH_DEPTHS, return an error
 		# HACK: I don't know how to do this in a more elegant way, because otherwise
 		# it may print 'invalid subscript' error when depth is e.g. '-1'.
-		for d in "${!__DH_DEPTHS[@]}"; do
+		if [ "$BASH_VERSION" != "" ]; then
+			local depths=("${!__DH_DEPTHS[@]}")
+		else
+			local depths=("${(@k)__DH_DEPTHS}")
+		fi
+		for d in "${depths[@]}"; do
 			[[ $d != "$depth" ]] && continue
 			echo -n "${__DH_DEPTHS[$d]}"
 			return 0
@@ -126,10 +135,7 @@ __dh_infer_depth() {
 __dh_get_ansi() {
 	local code="$1" depth=$2
 
-	local bg=false code
-
-	# `-n` sets the variable as indirect reference
-	local -n formats
+	local bg=false formats
 
 	# Check if the code is a background color code and remove the modifier
 	if [[ $code == '~'* ]]; then
@@ -143,14 +149,14 @@ __dh_get_ansi() {
 	# Check if the code is in format `#aabbcc;`
 	if [ ${#code} = 8 ]; then
 		# If it is, convert the code to an ANSI 24-bit color code
-		printf "${formats[24]}" 0x"${code:1:2}" 0x"${code:3:2}" 0x"${code:5:2}"
+		printf "$(__dh_var_expand "${formats}[24]")" 0x"${code:1:2}" 0x"${code:3:2}" 0x"${code:5:2}"
 		return 0
 	fi
 
 	# Check if the code is in format `#abc;`
 	if [ ${#code} = 5 ]; then
 		# If it is, convert the code to an ANSI 24-bit color code
-		printf "${formats[24]}" 0x"${code:1:1}0" 0x"${code:2:1}0" 0x"${code:3:1}0"
+		printf "$(__dh_var_expand "${formats}[24]")" 0x"${code:1:1}0" 0x"${code:2:1}0" 0x"${code:3:1}0"
 		return 0
 	fi
 
@@ -158,24 +164,32 @@ __dh_get_ansi() {
 	local formatter="${__DH_FORMATTERS[$code]}"
 	if [ "$formatter" != "" ]; then
 		# One code can produce multiple ANSI codes
-		read -r -a values <<<"$formatter"
+		if [ "$BASH_VERSION" != "" ]; then
+				read -ra values <<<"$formatter"
+		else
+				read -rA values <<<"$formatter"
+		fi
 
 		# Convert all ANSI code numbers to codes
 		for value in "${values[@]}"; do
-			printf "${formats[3]}" "$value"
+			printf "$(__dh_var_expand "${formats}[3]")" "$value"
 		done
 
 		return 0
 	fi
 
-	local template=${formats[$depth]}
+	local template="$(__dh_var_expand "${formats}[$depth]")"
 
 	# If the depth is 24, the ANSI code has RGB values - 3 numbers
 	if [ "$depth" = 24 ]; then
 		local color_code="${__DH_COLORS_24BIT[$code]}"
 		[ "$color_code" != "" ] || return 1
 
-		read -r -a rgb <<<"$color_code"
+		if [ "$BASH_VERSION" != "" ]; then
+				read -ra rgb <<<"$color_code"
+		else
+				read -rA rgb <<<"$color_code"
+		fi
 
 		printf "$template" "${rgb[@]}"
 		return 0
@@ -184,9 +198,7 @@ __dh_get_ansi() {
 	# Otherwise it has just one number
 
 	# Get the color map for the current depth
-	local -n color_map="__DH_COLORS_${depth}BIT"
-
-	local value="${color_map[$code]}"
+	local value="$(__dh_var_expand "__DH_COLORS_${depth}BIT[$code]")"
 	[ "$value" != "" ] || return 1
 
 	# If the code is a background color code and the depth is LOW or TTY, the format string is the
@@ -194,6 +206,13 @@ __dh_get_ansi() {
 	[ "$bg" = "true" ] && [ "$depth" -le "${__DH_DEPTHS[LOW]}" ] && value=$((value + 10))
 
 	printf "$template" "$value"
+}
+
+# Expand the variable named by $1 into its value. Works in both {ba,z}sh
+# eg: a=HOME $(var_expand $a) == /home/me
+# Ref: https://unix.stackexchange.com/a/472058
+__dh_var_expand() {
+  eval echo -n "\"\${$1}\""
 }
 
 # Find all unique matches of the regular expression in the string.
